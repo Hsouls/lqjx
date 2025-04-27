@@ -1,169 +1,174 @@
 <template>
-  <div>
-    <!-- 顶部导航栏 -->
-    <van-nav-bar title="学员点餐" fixed />
-
-    <!-- 推荐商品 -->
-    <van-panel title="推荐美食" desc="以下为推荐美食列表">
-      <van-card v-for="product in products" :key="product.id" :title="product.name" :desc="product.description"
-        :price="product.price" :thumb="product.image">
-        <!-- eslint-disable-next-line -->
-        <template v-slot:footer>
-          <div v-if="cartItems[product.id]">
-            <van-button class="btn" size="mini" @click="decreaseQuantity(product.id)">-</van-button>
-            <span style="padding: 0 10px; line-height: 24px;">{{ cartItems[product.id] }}</span>
-            <van-button class="btn" size="mini" @click="increaseQuantity(product.id)">+</van-button>
-          </div>
-          <van-button v-else size="mini" @click="addToCart(product)">加入购物车</van-button>
-        </template>
-      </van-card>
-    </van-panel>
-
-    <!-- 购物车信息 -->
-    <div class="cart-info">
-      <!-- 购物车总价格 -->
-      <div class="cart-total">
-        总价格：{{ totalPrice }}元
-      </div>
-
-      <!-- 悬浮的查看购物车圆形图标按钮 -->
-      <div class="view-cart-icon">
-        <van-button class="icon-button" type="primary" icon="shopping-cart-o" @click="showCarts"></van-button>
-      </div>
-
-      <!-- 确认按钮 -->
-      <div class="confirm-button">
-        <van-button type="primary" @click="confirmOrder">确认</van-button>
-      </div>
+  <div class="container">
+    <van-nav-bar title="龙泉职工食堂" class="nav-bar"  fixed />
+    <div class="user-info">
+      <span>程富强</span>
+      <span class="date">2025/04/26</span>
     </div>
-
-    <!-- 购物车弹窗 -->
-    <van-popup v-model="showCart" position="bottom">
-      <h4>已选商品</h4>
-      <template>
-        <van-card v-show="cart.length > 0" v-for="(product) in cart" :key="product.id" :title="product.name"
-          :desc="product.description" :price="product.price * cartItems[product.id]" :thumb="product.image">
-          <!-- eslint-disable-next-line -->
-          <template v-slot:footer>
-            <van-button size="mini" @click="decreaseQuantity(product.id)">-</van-button>
-            <span>{{ cartItems[product.id] }}</span>
-            <van-button size="mini" @click="increaseQuantity(product.id)">+</van-button>
-          </template>
-        </van-card>
-      </template>
-      <van-nodata v-show="cart.length === 0" description="购物车为空" />
-    </van-popup>
+    <van-list class="dish-list">
+      <van-cell v-for="(item, index) in dishes" :key="index" :title="item.title" :label="item.label">
+        <template #title>
+          <span v-if="index === 0" class="required">
+            <van-checkbox v-model="item.checked" :disabled="true" />
+            {{ item.name }}
+            <span class="price">¥{{ item.price }}</span>
+          </span>
+          <span v-else>
+            <van-checkbox v-model="item.checked" />
+            {{ item.name }}
+            <span class="price">¥{{ item.price }}</span>
+          </span>
+        </template>
+        <template #label>
+          <span v-if="index === 0" class="desc">{{ item.desc }}</span>
+          <span v-else class="desc">{{ item.desc }}</span>
+          <div class="quantity-wrap">
+            <span v-if="index === 0" class="fixed-quantity">{{ item.quantity }}</span>
+            <van-stepper
+              v-else
+              v-model="item.quantity"
+              :min="0"
+              :max="99"
+              class="stepper"
+            />
+          </div>
+        </template>
+      </van-cell>
+    </van-list>
+    <div class="footer">
+      <span class="selected-total">已选：¥{{ selectedTotal }}</span>
+      <span class="balance">本月余额：¥407.00</span>
+      <van-button type="primary" class="confirm-btn">确定</van-button>
+    </div>
   </div>
 </template>
 
 <script>
-import Vue from 'vue';
 export default {
   data() {
     return {
-      images: [
-        'https://example.com/image1.jpg',
-        'https://example.com/image2.jpg',
-        'https://example.com/image3.jpg',
-      ],
-      products: [
-        { id: 1, name: '汉堡', description: '美味汉堡', price: 20, image: 'https://example.com/product1.jpg' },
-        { id: 2, name: '披萨', description: '美味披萨', price: 30, image: 'https://example.com/product2.jpg' },
-        // 更多商品...
-      ],
-      cart: [], // 新增购物车数组
-      cartItems: {}, // 新增购物车商品数量对象
-      showCart: false, // 控制购物车弹窗显示
+      dishes: [
+        {
+          name: '标准午餐（必选）',
+          desc: '一荤一素',
+          price: 13,
+          quantity: 1,
+          checked: true,
+          disabled: true,
+          title: '',
+          label: ''
+        },
+        {
+          name: '煮素菜',
+          desc: '',
+          price: 2,
+          quantity: 0,
+          checked: false,
+          title: '',
+          label: ''
+        },
+        {
+          name: '煮荤菜',
+          desc: '',
+          price: 3,
+          quantity: 0,
+          checked: false,
+          title: '',
+          label: ''
+        },
+        {
+          name: '煮福袋',
+          desc: '',
+          price: 4,
+          quantity: 0,
+          checked: false,
+          title: '',
+          label: ''
+        },
+        {
+          name: '炸鸡腿',
+          desc: '',
+          price: 10,
+          quantity: 0,
+          checked: false,
+          title: '',
+          label: ''
+        },
+        {
+          name: '狮子头',
+          desc: '',
+          price: 10,
+          quantity: 0,
+          checked: false,
+          title: '',
+          label: ''
+        }
+      ]
     };
   },
   computed: {
-    totalPrice() {
-      return this.cart.reduce((total, item) => total + item.price * this.cartItems[item.id], 0).toFixed(2);
-    }
-  },
-  methods: {
-    showCarts() {
-      if (this.cart.length > 0) {
-        this.showCart = true
-      }
-    },
-    addToCart(product) {
-      if (this.cartItems[product.id]) {
-        this.cartItems[product.id]++;
-      } else {
-        this.cart.push(product);
-        Vue.set(this.cartItems, product.id, 1);
-      }
-    },
-    removeFromCart(productId) {
-      this.cart = this.cart.filter(item => item.id !== productId);
-      Vue.delete(this.cartItems, productId);
-    },
-    increaseQuantity(productId) {
-      if (this.cartItems[productId]) {
-        Vue.set(this.cartItems, productId, this.cartItems[productId] + 1);
-      }
-    },
-    decreaseQuantity(productId) {
-      if (this.cartItems[productId] > 1) {
-        Vue.set(this.cartItems, productId, this.cartItems[productId] - 1);
-      } else {
-        this.removeFromCart(productId);
-      }
-    },
-    confirmOrder() {
-      // 确认订单的逻辑
+    selectedTotal() {
+      return this.dishes.reduce((sum, item) => sum + item.quantity * item.price, 0);
     }
   }
 };
 </script>
 
-<style lang="less" scoped>
-img {
-  width: 100%;
-  height: auto;
+<style scoped>
+.container {
+  background-color: #f5f5f5;
 }
-
-.cart-info {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
+.nav-bar {
+  background-color: #3498db;
+  color: white;
+}
+.user-info {
+  padding: 10px;
   display: flex;
   justify-content: space-between;
-  background-color: #fff;
+  align-items: center;
+}
+.date {
+  color: #666;
+}
+.dish-list {
+  background-color: white;
+}
+.price {
+  color: red;
+  float: right;
+}
+.desc {
+  color: #666;
+}
+.quantity-wrap {
+  text-align: right;
+}
+.fixed-quantity {
+  border: 1px solid #e0e0e0;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
   padding: 10px;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-
-.cart-total {
-  padding: 10px;
+.selected-total {
+  font-size: 16px;
 }
-
-.view-cart-icon {
-  position: absolute;
-  top: -80px;
-  right: 20px;
-  border-radius: 50%;
-  background-color: #fff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-
-  .icon-button {
-    border-radius: 50%;
-  }
+.balance {
+  font-size: 16px;
+  color: #666;
 }
-
-.view-cart {
-  margin-right: 20px;
-}
-
-.confirm-button {
-  margin-right: 20px;
-}
-.btn{
- width: 30px;
- margin-left: 0 !important; 
+.confirm-btn {
+  background-color: #4cd964;
+  border-color: #4cd964;
 }
 </style>
-
-
-
