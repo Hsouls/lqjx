@@ -7,7 +7,7 @@
     />
     
     <!-- 推荐商品 -->
-    <van-panel title="推荐商品" desc="以下为推荐商品列表">
+    <van-panel title="推荐美食" desc="以下为推荐美食列表">
       <van-card
         v-for="product in products"
         :key="product.id"
@@ -38,9 +38,19 @@
     
     <!-- 购物车弹窗 -->
     <van-popup v-model="showCart" position="bottom">
-      <van-list>
-        <van-cell v-for="item in cart" :key="item.id" :title="item.name" :value="item.price" />
-      </van-list>
+      <van-card
+        v-for="product in cart"
+        :key="product.id"
+        :title="product.name"
+        :desc="product.description"
+        :price="product.price"
+        :thumb="product.image"
+      >
+      <!-- eslint-disable-next-line -->
+      <template v-slot:footer>
+        <van-button size="mini" @click="removeFromCart(product.id)">删除</van-button>
+      </template>
+      </van-card>
     </van-popup>
   </div>
 </template>
@@ -61,12 +71,6 @@ export default {
       ],
       products: [
         { id: 1, name: '汉堡', description: '美味汉堡', price: '20元', image: 'https://example.com/product1.jpg' },
-        { id: 2, name: '披萨', description: '美味披萨', price: '30元', image: 'https://example.com/product2.jpg' },{ id: 1, name: '汉堡', description: '美味汉堡', price: '20元', image: 'https://example.com/product1.jpg' },
-        { id: 2, name: '披萨', description: '美味披萨', price: '30元', image: 'https://example.com/product2.jpg' },{ id: 1, name: '汉堡', description: '美味汉堡', price: '20元', image: 'https://example.com/product1.jpg' },
-        { id: 2, name: '披萨', description: '美味披萨', price: '30元', image: 'https://example.com/product2.jpg' },{ id: 1, name: '汉堡', description: '美味汉堡', price: '20元', image: 'https://example.com/product1.jpg' },
-        { id: 2, name: '披萨', description: '美味披萨', price: '30元', image: 'https://example.com/product2.jpg' },{ id: 1, name: '汉堡', description: '美味汉堡', price: '20元', image: 'https://example.com/product1.jpg' },
-        { id: 2, name: '披萨', description: '美味披萨', price: '30元', image: 'https://example.com/product2.jpg' },{ id: 1, name: '汉堡', description: '美味汉堡', price: '20元', image: 'https://example.com/product1.jpg' },
-        { id: 2, name: '披萨', description: '美味披萨', price: '30元', image: 'https://example.com/product2.jpg' },{ id: 1, name: '汉堡', description: '美味汉堡', price: '20元', image: 'https://example.com/product1.jpg' },
         { id: 2, name: '披萨', description: '美味披萨', price: '30元', image: 'https://example.com/product2.jpg' },
         // 更多商品...
       ],
@@ -82,7 +86,9 @@ export default {
   methods: {
     addToCart(product) {
       this.cart.push(product);
-      // 删除 this.showCart = true;
+    },
+    removeFromCart(productId) {
+      this.cart = this.cart.filter(item => item.id !== productId);
     }
   }
 };
@@ -106,6 +112,7 @@ img {
 .cart-total {
   padding: 10px;
 }
+.view-cart{
+    margin-right: 20px;
+}
 </style>
-
-
