@@ -10,9 +10,9 @@
         <!-- eslint-disable-next-line -->
         <template v-slot:footer>
           <div v-if="cartItems[product.id]">
-            <van-button size="mini" @click="decreaseQuantity(product.id)">-</van-button>
-            <span>{{ cartItems[product.id] }}</span>
-            <van-button size="mini" @click="increaseQuantity(product.id)">+</van-button>
+            <van-button class="btn" size="mini" @click="decreaseQuantity(product.id)">-</van-button>
+            <span style="padding: 0 10px; line-height: 24px;">{{ cartItems[product.id] }}</span>
+            <van-button class="btn" size="mini" @click="increaseQuantity(product.id)">+</van-button>
           </div>
           <van-button v-else size="mini" @click="addToCart(product)">加入购物车</van-button>
         </template>
@@ -158,6 +158,10 @@ img {
 
 .confirm-button {
   margin-right: 20px;
+}
+.btn{
+ width: 30px;
+ margin-left: 0 !important; 
 }
 </style>
 
