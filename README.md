@@ -13,7 +13,7 @@ npm run serve
 ### Compiles and minifies for production
 ```
 npm run build
-```
+```git pull --allow-unrelated-histories origin main
 
 ### Lints and fixes files
 ```
